@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaviSqlSchemaExporter", "DaviSqlSchemaExporter\DaviSqlSchemaExporter.csproj", "{0374EEBD-8755-4925-BC37-111E92D0E5D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaviSqlMssqlScripter", "DaviSqlMssqlScripter\DaviSqlMssqlScripter.csproj", "{0374EEBD-8755-4925-BC37-111E92D0E5D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

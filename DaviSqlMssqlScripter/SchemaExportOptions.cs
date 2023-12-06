@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PRISM;
 
-namespace DaviSqlSchemaExporter
+namespace DaviSqlMssqlScripter
 {
     public class SchemaExportOptions
     {

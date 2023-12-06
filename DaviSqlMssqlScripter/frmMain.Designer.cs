@@ -1,4 +1,4 @@
-﻿namespace DaviSqlSchemaExporter
+﻿namespace DaviSqlMssqlScripter
 {
     partial class frmMain
     {

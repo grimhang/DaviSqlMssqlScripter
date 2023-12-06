@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0374EEBD-8755-4925-BC37-111E92D0E5D0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>DaviSqlSchemaExporter</RootNamespace>
-    <AssemblyName>DaviSqlSchemaExporter</AssemblyName>
+    <RootNamespace>DaviSqlMssqlScripter</RootNamespace>
+    <AssemblyName>DaviSqlMssqlScripter</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

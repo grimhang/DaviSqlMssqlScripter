@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace DaviSqlSchemaExporter
+namespace DaviSqlMssqlScripter
 {
     public sealed class DBSchemaExporterSQLServer : DBSchemaExporterBase
     {
