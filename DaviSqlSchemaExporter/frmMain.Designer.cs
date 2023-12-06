@@ -192,6 +192,7 @@
             this.Controls.Add(this.btnStart);
             this.Name = "frmMain";
             this.Text = "Mssql Schema Expoter";
+            this.Load += new System.EventHandler(this.frmMain_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
