@@ -42,6 +42,7 @@
             this.txtLoginId = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.lstDatabase = new System.Windows.Forms.ListBox();
+            this.lstObjectTypesToScript = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,11 +58,11 @@
             // 
             // txtResult
             // 
-            this.txtResult.Location = new System.Drawing.Point(21, 318);
+            this.txtResult.Location = new System.Drawing.Point(21, 393);
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtResult.Size = new System.Drawing.Size(1015, 362);
+            this.txtResult.Size = new System.Drawing.Size(1015, 287);
             this.txtResult.TabIndex = 1;
             this.txtResult.WordWrap = false;
             // 
@@ -176,16 +177,27 @@
             // 
             this.lstDatabase.FormattingEnabled = true;
             this.lstDatabase.ItemHeight = 12;
-            this.lstDatabase.Location = new System.Drawing.Point(533, 22);
+            this.lstDatabase.Location = new System.Drawing.Point(21, 207);
             this.lstDatabase.Name = "lstDatabase";
-            this.lstDatabase.Size = new System.Drawing.Size(329, 136);
+            this.lstDatabase.Size = new System.Drawing.Size(266, 136);
             this.lstDatabase.TabIndex = 7;
+            // 
+            // lstObjectTypesToScript
+            // 
+            this.lstObjectTypesToScript.FormattingEnabled = true;
+            this.lstObjectTypesToScript.ItemHeight = 12;
+            this.lstObjectTypesToScript.Location = new System.Drawing.Point(538, 21);
+            this.lstObjectTypesToScript.Name = "lstObjectTypesToScript";
+            this.lstObjectTypesToScript.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.lstObjectTypesToScript.Size = new System.Drawing.Size(273, 280);
+            this.lstObjectTypesToScript.TabIndex = 8;
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1160, 692);
+            this.Controls.Add(this.lstObjectTypesToScript);
             this.Controls.Add(this.lstDatabase);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.txtResult);
@@ -216,6 +228,7 @@
         private System.Windows.Forms.Button btnConnect2;
         private System.Windows.Forms.ListBox lstDatabase;
         private System.Windows.Forms.CheckBox chkUseIntegrated;
+        private System.Windows.Forms.ListBox lstObjectTypesToScript;
     }
 }
 

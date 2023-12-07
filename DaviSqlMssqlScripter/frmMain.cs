@@ -3,6 +3,7 @@ using Microsoft.SqlServer.Management.Smo;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Schema;
@@ -27,9 +28,49 @@ namespace DaviSqlMssqlScripter
             txtLoginId.Enabled = false;
             txtPassword.Enabled = false;
 
+            PopulateComboBoxes();
             //txtServerAddr.Focus();
         }
 
+        private void PopulateComboBoxes()
+        {
+            try
+            {
+                /*
+                cboTableNamesToExportSortOrder.Items.Clear();
+                cboTableNamesToExportSortOrder.Items.Insert((int)TableNameSortModeConstants.Name, "Sort by Name");
+                cboTableNamesToExportSortOrder.Items.Insert((int)TableNameSortModeConstants.RowCount, "Sort by Row Count");
+                cboTableNamesToExportSortOrder.SelectedIndex = (int)TableNameSortModeConstants.RowCount;
+                */
+
+                lstObjectTypesToScript.Items.Clear();
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.Db, "Database");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.DbSchema, "Database Schemas");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.DbRole, "Database Roles");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.DbPermission, "Database Permissions");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.FullText, "FullText Catalog");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.XmlSchema, "Xml Schema Collection");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.Sequence, "Sequence");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.UserDefinedDataType, "User Defined Data Types");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.UserDefinedFunction, "User Defined Functions");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.Table, "Tables");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.View, "Views");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.Indexe, "Indexs");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.StoredProcedure, "Stored Procedures");                
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.UserDefinedType, "User Defined Types");
+                lstObjectTypesToScript.Items.Insert((int)ObjectTypeConstants.Synonyms, "Synonyms");
+
+                // Auto-select all of the options
+                for (var index = 0; index < lstObjectTypesToScript.Items.Count; index++)
+                {
+                    lstObjectTypesToScript.SetSelected(index, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error in PopulateComboBoxes: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
         private void btnConnect_Click(object sender, EventArgs e)
         {
             lstDatabase.Items.Clear();
@@ -156,10 +197,33 @@ namespace DaviSqlMssqlScripter
 
             txtResult.Text = "";
 
-            ExportDbScript();
-            ExportDbSchemaScript();
-            ExportDbFullTextScript();
-            ExportDbXmlSchemaScript();
+            if(IsSelectObjectType(ObjectTypeConstants.Db))
+                ExportDbScript();
+
+            if (IsSelectObjectType(ObjectTypeConstants.DbSchema))
+                ExportDbSchemaScript();
+
+            if (IsSelectObjectType(ObjectTypeConstants.DbRole))
+                ExportDbRoleScript();
+
+            if (IsSelectObjectType(ObjectTypeConstants.FullText))
+                ExportDbFullTextScript();
+
+            if (IsSelectObjectType(ObjectTypeConstants.XmlSchema))
+                ExportDbXmlSchemaScript();
+
+            if (IsSelectObjectType(ObjectTypeConstants.UserDefinedDataType))
+                ExportDbUserDefinedDataTypeScript();
+        }
+
+        private bool IsSelectObjectType(ObjectTypeConstants constNo)
+        {
+            if (lstObjectTypesToScript.GetSelected((int)(ObjectTypeConstants)constNo))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void chkUseIntegrated_CheckedChanged(object sender, EventArgs e)
@@ -323,6 +387,56 @@ namespace DaviSqlMssqlScripter
 
         }
 
+        private void ExportDbRoleScript()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string myDatabase = lstDatabase.SelectedItem.ToString();
+
+            var scripter = new Scripter(dbServer);
+            var scriptOptions = scripter.Options;
+            scriptOptions.NoCollation = true;
+
+            var exporter = new DBSchemaExporterSQLServer();
+            var db = dbServer.Databases[myDatabase];
+
+            StringCollection roleNames = new StringCollection();
+
+            foreach (DatabaseRole one in db.Roles)
+            {
+                if (one.Name != "db_accessadmin" && one.Name != "db_backupoperator" && one.Name != "db_datareader" && one.Name != "db_datawriter"
+                    && one.Name != "db_ddladmin" && one.Name != "db_denydatareader" && one.Name != "db_denydatawriter" && one.Name != "db_owner"
+                    && one.Name != "db_securityadmin")
+                {
+                    roleNames.Add(one.Name);
+                }
+            }
+
+            foreach (var roleName in roleNames)
+            {
+                var scriptInfo = exporter.CleanSqlScript(exporter.StringCollectionToList(db.Roles[roleName].Script(scriptOptions)));
+
+                foreach (var script in scriptInfo)
+                {
+                    sb.Append(script + Environment.NewLine);
+                    sb.Append("GO" + Environment.NewLine);
+                }
+            }
+/*
+            foreach (DatabaseRole oneRole in db.Roles)
+            {
+                var scriptInfo = exporter.CleanSqlScript(exporter.StringCollectionToList(oneRole.Script(scriptOptions)));
+
+                foreach (var script in scriptInfo)
+                {
+                    sb.Append(script);  // 줄바꿈이 끝에 포함되어 있음
+                    sb.Append("GO" + Environment.NewLine);
+                }
+            }*/
+
+            txtResult.Text += sb.ToString();
+        }
+
         private void ExportDbFullTextScript()
         {
             StringBuilder sb = new StringBuilder();
@@ -370,6 +484,33 @@ namespace DaviSqlMssqlScripter
             foreach (Microsoft.SqlServer.Management.Smo.XmlSchemaCollection oneXmlSchema in db.XmlSchemaCollections)
             {
                 var scriptInfo = exporter.CleanSqlScript(exporter.StringCollectionToList(oneXmlSchema.Script(scriptOptions)));
+
+                foreach (var script in scriptInfo)
+                {
+                    sb.Append(script + Environment.NewLine);
+                    sb.Append("GO" + Environment.NewLine);
+                }
+            }
+
+            txtResult.Text += sb.ToString();
+        }
+
+        private void ExportDbUserDefinedDataTypeScript()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string myDatabase = lstDatabase.SelectedItem.ToString();
+
+            var scripter = new Scripter(dbServer);
+            var scriptOptions = scripter.Options;
+            scriptOptions.NoCollation = true;
+
+            var exporter = new DBSchemaExporterSQLServer();
+            var db = dbServer.Databases[myDatabase];
+
+            foreach (UserDefinedDataType oneType in db.UserDefinedDataTypes)
+            {
+                var scriptInfo = exporter.CleanSqlScript(exporter.StringCollectionToList(oneType.Script(scriptOptions)));
 
                 foreach (var script in scriptInfo)
                 {
@@ -477,5 +618,88 @@ namespace DaviSqlMssqlScripter
                 MessageBox.Show("Error in ResetToDefaults: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }*/
+
+        /// <summary>
+        /// Schema object types
+        /// </summary>
+        public enum ObjectTypeConstants
+        {
+            /// <summary>
+            /// Schemas and roles
+            /// </summary>
+            Db = 0,
+
+            /// <summary>
+            /// Schemas and roles
+            /// </summary>
+            DbSchema = 1,
+
+            /// <summary>
+            /// Schemas and roles
+            /// </summary>
+            DbRole = 2,
+
+            /// <summary>
+            /// Schemas and roles
+            /// </summary>
+            DbPermission = 3,
+
+            /// <summary>
+            /// Schemas and roles
+            /// </summary>
+            FullText = 4,
+
+            /// <summary>
+            /// Schemas and roles
+            /// </summary>            
+            XmlSchema = 5,
+
+            /// <summary>
+            /// Tables
+            /// </summary>
+            Sequence = 6,
+
+            /// <summary>
+            /// User defined data types
+            /// </summary>
+            UserDefinedDataType = 7,
+
+            /// <summary>
+            /// User defined functions
+            /// </summary>
+            UserDefinedFunction = 8,
+
+            /// <summary>
+            /// Tables
+            /// </summary>
+            Table = 9,
+
+            /// <summary>
+            /// Views
+            /// </summary>
+            View = 10,
+
+            /// <summary>
+            /// Views
+            /// </summary>
+            Indexe = 11,
+
+            /// <summary>
+            /// Stored procedures
+            /// </summary>
+            StoredProcedure = 12,
+
+            
+
+            /// <summary>
+            /// User defined types
+            /// </summary>
+            UserDefinedType = 13,
+
+            /// <summary>
+            /// Synonyms
+            /// </summary>
+            Synonyms = 14
+        }
     }
 }
