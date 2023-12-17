@@ -214,6 +214,9 @@ namespace DaviSqlMssqlScripter
 
             if (IsSelectObjectType(ObjectTypeConstants.UserDefinedDataType))
                 ExportDbUserDefinedDataTypeScript();
+
+            if (IsSelectObjectType(ObjectTypeConstants.Table))
+                ExportDbTableScript();
         }
 
         private bool IsSelectObjectType(ObjectTypeConstants constNo)
@@ -511,6 +514,43 @@ namespace DaviSqlMssqlScripter
             foreach (UserDefinedDataType oneType in db.UserDefinedDataTypes)
             {
                 var scriptInfo = exporter.CleanSqlScript(exporter.StringCollectionToList(oneType.Script(scriptOptions)));
+
+                foreach (var script in scriptInfo)
+                {
+                    sb.Append(script + Environment.NewLine);
+                    sb.Append("GO" + Environment.NewLine);
+                }
+            }
+
+            txtResult.Text += sb.ToString();
+        }
+
+        private void ExportDbTableScript()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string myDatabase = lstDatabase.SelectedItem.ToString();
+
+            var scripter = new Scripter(dbServer);
+            var scriptOptions = scripter.Options;
+            scriptOptions.NoCollation = true;
+
+            var exporter = new DBSchemaExporterSQLServer();
+            var db = dbServer.Databases[myDatabase];
+
+            
+
+            
+
+            foreach (Table oneTable in db.Tables)
+            {
+
+                /*var smoObjectArray = new SqlSmoObject[] {
+                    oneTable
+                };
+
+                var scriptInfo = exporter.CleanSqlScript(exporter.StringCollectionToList(scripter.Script(smoObjectArray)));*/
+                var scriptInfo = exporter.CleanSqlScript(exporter.StringCollectionToList(oneTable.Script(scriptOptions)));
 
                 foreach (var script in scriptInfo)
                 {
