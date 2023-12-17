@@ -215,6 +215,9 @@ namespace DaviSqlMssqlScripter
             if (IsSelectObjectType(ObjectTypeConstants.UserDefinedDataType))
                 ExportDbUserDefinedDataTypeScript();
 
+            if (IsSelectObjectType(ObjectTypeConstants.UserDefinedFunction))
+                ExportDbUserDefinedFunctionScript();
+
             if (IsSelectObjectType(ObjectTypeConstants.Table))
                 ExportDbTableScript();
         }
@@ -519,6 +522,38 @@ namespace DaviSqlMssqlScripter
                 {
                     sb.Append(script + Environment.NewLine);
                     sb.Append("GO" + Environment.NewLine);
+                }
+            }
+
+            txtResult.Text += sb.ToString();
+        }
+
+        private void ExportDbUserDefinedFunctionScript()
+        {
+            /* 테이블의 기본값에 함수가 지정되어 있을때 SSMS에는 해당테이블 바로 앞에 스크립팅된다. 주의
+             */
+            StringBuilder sb = new StringBuilder();
+
+            string myDatabase = lstDatabase.SelectedItem.ToString();
+
+            var scripter = new Scripter(dbServer);
+            var scriptOptions = scripter.Options;
+            scriptOptions.NoCollation = true;
+
+            var exporter = new DBSchemaExporterSQLServer();
+            var db = dbServer.Databases[myDatabase];
+
+            foreach (UserDefinedFunction oneFunc in db.UserDefinedFunctions)
+            {
+                if (!oneFunc.IsSystemObject)
+                {
+                    var scriptInfo = exporter.CleanSqlScript(exporter.StringCollectionToList(oneFunc.Script(scriptOptions)));
+
+                    foreach (var script in scriptInfo)
+                    {
+                        sb.Append(script.TrimEnd() + Environment.NewLine);
+                        sb.Append("GO" + Environment.NewLine);
+                    }
                 }
             }
 
