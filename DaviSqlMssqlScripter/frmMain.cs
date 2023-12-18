@@ -287,6 +287,7 @@ namespace DaviSqlMssqlScripter
             catch (Exception ex)
             {
                 //MessageBox.Show("Error in UpdateDatabaseList: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                txtResult.Text = "Err메시지: " + ex.Message;
             }
             finally
             {
